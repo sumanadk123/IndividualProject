@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Outfit Showcase</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+  <link rel="stylesheet" href="showcase.css">
+</head>
+<body>
+  <div class="showcase-container">
+    <header>
+      <h1>Outfit of the Day</h1>
+    </header>
+
+    <div class="showcase-content">
+      <!-- LEFT: Outfit Details -->
+      <div class="details-panel">
+        <h3>Outfit Details</h3>
+        <ul id="outfit-details">
+          <!-- Populated dynamically -->
+        </ul>
+      </div>
+
+      <!-- CENTER: Main Outfit Card -->
+      <div class="center-card">
+        <div class="image-wrapper">
+          <span class="badge" id="badge">New</span>
+          <img id="outfit-image" src="" alt="Outfit">
+          <button id="love-btn" class="love-btn">
+            <i class="far fa-heart"></i>
+          </button>
+          <!-- Navigation -->
+    <!-- <div class="navigation">
+      <button class="nav-btn" id="prev-btn"><i class="fas fa-chevron-left"></i></button>
+      <button class="nav-btn" id="next-btn"><i class="fas fa-chevron-right"></i></button>
+    </div> -->
+        </div>
+        <p class="outfit-quote" id="outfit-quote"></p>
+      </div>
+
+      <!-- RIGHT: Suggested Accessories -->
+      <div class="details-panel">
+        <h3>Suggested Accessories</h3>
+        <ul id="accessory-details">
+          <!-- Populated dynamically -->
+        </ul>
+      </div>
+    </div>
+
+    <!-- Back Button -->
+    <button id="back-btn" class="back-btn">
+      <i class="fas fa-arrow-left"></i> Back
+    </button>
+  </div>
+
+  <script>
+    // Retrieve the selected outfit from localStorage
+const selectedOutfit = JSON.parse(localStorage.getItem("selectedOutfit"));
+
+// DOM elements
+const outfitImage = document.getElementById("outfit-image");
+const outfitQuote = document.getElementById("outfit-quote");
+const outfitDetails = document.getElementById("outfit-details");
+const accessoryDetails = document.getElementById("accessory-details");
+const backBtn = document.getElementById("back-btn");
+const loveBtn = document.getElementById("love-btn").querySelector("i");
+
+// Optional: If you have navigation for multiple outfits
+const prevBtn = document.getElementById("prev-btn");
+const nextBtn = document.getElementById("next-btn");
+
+// Check if selectedOutfit exists
+if (!selectedOutfit) {
+  alert("No outfit selected!");
+  window.location.href = "trail.html";
+} else {
+  // Populate center image & quote
+  outfitImage.src = selectedOutfit.img;
+  outfitImage.alt = selectedOutfit.name;
+  outfitQuote.textContent = selectedOutfit.quote;
+
+  // Populate left panel: Outfit Details
+  outfitDetails.innerHTML = `
+    <li><strong>Name:</strong> ${selectedOutfit.name}</li>
+    <li><strong>Category:</strong> ${selectedOutfit.category}</li>
+    <li><strong>Description:</strong> ${selectedOutfit.desc}</li>
+  `;
+
+  // Populate right panel: Suggested Accessories
+  accessoryDetails.innerHTML = selectedOutfit.accessories
+    .map(acc => `<li>${acc}</li>`)
+    .join("");
+
+  // Check if this outfit was liked before
+  let likedOutfits = JSON.parse(localStorage.getItem("likedOutfits")) || [];
+  if (likedOutfits.includes(selectedOutfit.id)) {
+    loveBtn.classList.remove("far");
+    loveBtn.classList.add("fas");
+    loveBtn.style.color = "#e63946";
+  }
+}
+
+// Back button click
+backBtn.addEventListener("click", () => {
+  window.history.back();
+});
+
+// Love button toggle
+loveBtn.addEventListener("click", () => {
+  let likedOutfits = JSON.parse(localStorage.getItem("likedOutfits")) || [];
+  if (loveBtn.classList.contains("far")) {
+    loveBtn.classList.remove("far");
+    loveBtn.classList.add("fas");
+    loveBtn.style.color = "#e63946";
+    if (!likedOutfits.includes(selectedOutfit.id)) likedOutfits.push(selectedOutfit.id);
+  } else {
+    loveBtn.classList.remove("fas");
+    loveBtn.classList.add("far");
+    loveBtn.style.color = "#888";
+    likedOutfits = likedOutfits.filter(id => id !== selectedOutfit.id);
+  }
+  localStorage.setItem("likedOutfits", JSON.stringify(likedOutfits));
+});
+
+// Optional: Previous/Next navigation (if you want multiple outfits)
+// const allOutfits = Object.values(outfits).flat();
+// let currentIndex = allOutfits.findIndex(o => o.id === selectedOutfit.id);
+// prevBtn.addEventListener("click", () => { /* update selectedOutfit */ });
+// nextBtn.addEventListener("click", () => { /* update selectedOutfit */ });
+
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/js/all.min.js"></script>
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</body>
+</html>
